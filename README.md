@@ -1,0 +1,2 @@
+# StudyRecordAndroidApp
+勉強時間記録Androidアプリ
