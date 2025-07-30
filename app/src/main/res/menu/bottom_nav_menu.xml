@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_home"
+        android:icon="@android:drawable/ic_menu_info_details"
+        android:title="ホーム" />
+
+    <item
+        android:id="@+id/nav_study"
+        android:icon="@android:drawable/ic_menu_info_details"
+        android:title="月切り替え" />
+
+    <item
+        android:id="@+id/nav_settings"
+        android:icon="@android:drawable/ic_menu_info_details"
+        android:title="カテゴリ編集" />
+</menu>
