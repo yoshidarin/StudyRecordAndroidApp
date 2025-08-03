@@ -1,11 +1,11 @@
 package com.example.sturdyrecordandroidapp.model;
 
 public class CategorySummary {
-    public String category;
+    public int categoryId;
     public int total;
 
-    public CategorySummary(String category, int total) {
-        this.category = category;
+    public CategorySummary(int  categoryId, int total) {
+        this.categoryId = categoryId;
         this.total = total;
     }
 
