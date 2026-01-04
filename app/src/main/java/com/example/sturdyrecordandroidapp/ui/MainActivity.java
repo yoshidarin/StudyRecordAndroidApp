@@ -5,57 +5,54 @@ import android.os.Bundle;
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.sturdyrecordandroidapp.R;
-import com.example.sturdyrecordandroidapp.db.AppDatabase;
-import com.example.sturdyrecordandroidapp.model.CategorySummary;
-import com.example.sturdyrecordandroidapp.model.entity.StudyRecord;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
+import com.example.sturdyrecordandroidapp.viewmodel.MainViewModel;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
 public class MainActivity extends AppCompatActivity{
+
+    private MainViewModel viewModel;
+    private CategorySummaryAdapter adapter;
+    private RecyclerView recyclerView;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
+// 初期表示はMainFragment
+        if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragmentContainer, new MainFragment())
+                    .commit();
+        }
 
-        RecyclerView recyclerView = findViewById(R.id.category_study_list_recycler_view);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        AppDatabase db = AppDatabase.getInstance(this);
+        // BottomNavigationViewの設定
+        BottomNavigationView bottomNav = findViewById(R.id.bottomNavigation);
+        bottomNav.setOnItemSelectedListener(item -> {
+            Fragment selectedFragment = null;
 
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
+            int itemId = item.getItemId();
+            if (itemId == R.id.nav_home) {
+                selectedFragment = new MainFragment();
+            }else if (itemId == R.id.nav_category) {
+                selectedFragment = new CategoryEditFragment();
+            }
+
+            if (selectedFragment != null) {
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragmentContainer, selectedFragment)
+                        .commit();
+            }
+
+            return true;
         });
-        new Thread(() -> {
-            /* 仮データを挿入（初回のみなどで）
-            db.studyRecordDao().insert(new StudyRecord("英語", "2025-07-25", 90));
-            db.studyRecordDao().insert(new StudyRecord("数学", "2025-07-26", 60));
-            db.studyRecordDao().insert(new StudyRecord("英語", "2025-07-27", 75));
-             */
-
-            // 今月のカテゴリ別合計時間を取得
-            String thisMonth = new SimpleDateFormat("yyyy-MM", Locale.getDefault()).format(new Date());
-            List<CategorySummary> summaryList = db.studyRecordDao().getMonthlySummary(thisMonth);
-
-            // UIスレッドでRecyclerView更新
-            runOnUiThread(() -> {
-                CategorySummaryAdapter adapter = new CategorySummaryAdapter(summaryList);
-                recyclerView.setAdapter(adapter);
-            });
-        }).start();
     }
 }

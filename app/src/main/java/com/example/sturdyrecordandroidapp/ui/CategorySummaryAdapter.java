@@ -5,50 +5,60 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.sturdyrecordandroidapp.R;
 import com.example.sturdyrecordandroidapp.model.CategorySummary;
-
+import java.util.ArrayList;
 import java.util.List;
 
 public class CategorySummaryAdapter extends RecyclerView.Adapter<CategorySummaryAdapter.ViewHolder> {
 
-    private List<CategorySummary> categorySummaries;
+    private List<CategorySummary> summaryList;
 
-    public CategorySummaryAdapter(List<CategorySummary> categorySummaries) {
-        this.categorySummaries = categorySummaries;
-    }
-
-    public static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView textCategoryName;
-        TextView textCategoryTime;
-
-        public ViewHolder(View itemView) {
-            super(itemView);
-            textCategoryName = itemView.findViewById(R.id.textCategoryName);
-            textCategoryTime = itemView.findViewById(R.id.textCategoryTime);
-        }
-    }
-
+    @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_category_summary, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
-        CategorySummary summary = categorySummaries.get(position);
-        holder.textCategoryName.setText(summary.category);
-        int hours = summary.total / 60;
-        int minutes = summary.total % 60;
-        holder.textCategoryTime.setText(hours + "時間" + minutes + "分");
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        CategorySummary summary = summaryList.get(position);
+        holder.bind(summary);
     }
 
     @Override
     public int getItemCount() {
-        return categorySummaries.size();
+        return summaryList != null ? summaryList.size() : 0;
+    }
+
+    public void setSummaryList(List<CategorySummary> summaryList) {
+        if (summaryList != null) {
+            this.summaryList = summaryList;
+        } else {
+            this.summaryList = new ArrayList<>();
+        }
+        notifyDataSetChanged();
+    }
+
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+        TextView tvCategoryName;
+        TextView tvCategoryTime;
+
+        public ViewHolder(View itemView) {
+            super(itemView);
+            tvCategoryName = itemView.findViewById(R.id.tvCategoryName);
+            tvCategoryTime = itemView.findViewById(R.id.tvCategoryTime);
+        }
+        public void bind(CategorySummary summary) {
+            if (summary != null) {
+                tvCategoryName.setText(summary.categoryName);
+                tvCategoryTime.setText(summary.getFormattedTime());
+            }
+        }
     }
 }
