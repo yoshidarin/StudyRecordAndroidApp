@@ -1,17 +1,17 @@
 package com.example.sturdyrecordandroidapp.model;
 
 public class CategorySummary {
-    public int categoryId;
-    public int total;
+    public String categoryName;
+    public int totalTime;
 
-    public CategorySummary(int  categoryId, int total) {
-        this.categoryId = categoryId;
-        this.total = total;
+    public CategorySummary(String categoryName, int totalTime) {
+        this.categoryName = categoryName;
+        this.totalTime = totalTime;
     }
 
     public String getFormattedTime() {
-        int hours = total / 60;
-        int minutes = total % 60;
-        return hours + "時間" + minutes + "分";
+        int hours = totalTime / 60;
+        int minutes = totalTime % 60;
+        return String.format("%d時間%d分", hours, minutes);
     }
 }
